@@ -13,7 +13,14 @@ import Attendance from './pages/employee/Attendance';
 import Leave from './pages/employee/Leave';
 import Payroll from './pages/employee/Payroll';
 
-// Placeholder components for admin pages
+// Admin Pages
+import AdminDashboard from './pages/admin/Dashboard';
+import Employees from './pages/admin/Employees';
+import AdminAttendance from './pages/admin/Attendance';
+import AdminLeaves from './pages/admin/Leaves';
+import AdminPayroll from './pages/admin/Payroll';
+
+// Placeholder components for remaining admin pages
 const PlaceholderPage = ({ title }) => (
     <div style={{ padding: '2rem', textAlign: 'center' }}>
         <h2>{title}</h2>
@@ -77,7 +84,7 @@ function App() {
                         path="/admin/dashboard"
                         element={
                             <ProtectedRoute adminOnly>
-                                <PlaceholderPage title="Admin Dashboard" />
+                                <AdminDashboard />
                             </ProtectedRoute>
                         }
                     />
@@ -85,7 +92,7 @@ function App() {
                         path="/admin/employees"
                         element={
                             <ProtectedRoute adminOnly>
-                                <PlaceholderPage title="Manage Employees" />
+                                <Employees />
                             </ProtectedRoute>
                         }
                     />
@@ -93,7 +100,7 @@ function App() {
                         path="/admin/attendance"
                         element={
                             <ProtectedRoute adminOnly>
-                                <PlaceholderPage title="Manage Attendance" />
+                                <AdminAttendance />
                             </ProtectedRoute>
                         }
                     />
@@ -101,7 +108,7 @@ function App() {
                         path="/admin/leaves"
                         element={
                             <ProtectedRoute adminOnly>
-                                <PlaceholderPage title="Manage Leaves" />
+                                <AdminLeaves />
                             </ProtectedRoute>
                         }
                     />
@@ -109,7 +116,7 @@ function App() {
                         path="/admin/payroll"
                         element={
                             <ProtectedRoute adminOnly>
-                                <PlaceholderPage title="Manage Payroll" />
+                                <AdminPayroll />
                             </ProtectedRoute>
                         }
                     />

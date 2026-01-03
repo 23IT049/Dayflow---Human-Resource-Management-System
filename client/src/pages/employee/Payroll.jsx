@@ -44,33 +44,60 @@ const Payroll = () => {
         );
     }
 
-    const salary = profile?.salary || 0;
-    const annualCTC = salary * 12;
-
-    // Sample salary breakdown (in real app, this would come from backend)
-    const salaryBreakdown = {
-        earnings: {
-            basic: salary * 0.5,
-            hra: salary * 0.2,
-            allowances: salary * 0.3
-        },
-        deductions: {
-            pf: salary * 0.12,
-            tax: salary * 0.1,
-            insurance: salary * 0.03
-        }
+    const salary = profile?.salary || {
+        basic: 0,
+        hra: 0,
+        da: 0,
+        ta: 0,
+        otherAllowances: 0,
+        pf: 0,
+        tax: 0,
+        otherDeductions: 0
     };
 
-    const totalEarnings = Object.values(salaryBreakdown.earnings).reduce((a, b) => a + b, 0);
-    const totalDeductions = Object.values(salaryBreakdown.deductions).reduce((a, b) => a + b, 0);
-    const netSalary = totalEarnings - totalDeductions;
+    // Calculate totals from actual salary data
+    const earnings = {
+        basic: salary.basic || 0,
+        hra: salary.hra || 0,
+        da: salary.da || 0,
+        ta: salary.ta || 0,
+        otherAllowances: salary.otherAllowances || 0
+    };
 
-    // Sample payment history (in real app, this would come from backend)
-    const paymentHistory = [
-        { month: 'December 2025', gross: totalEarnings, deductions: totalDeductions, net: netSalary, status: 'Paid' },
-        { month: 'November 2025', gross: totalEarnings, deductions: totalDeductions, net: netSalary, status: 'Paid' },
-        { month: 'October 2025', gross: totalEarnings, deductions: totalDeductions, net: netSalary, status: 'Paid' },
-    ];
+    const deductions = {
+        pf: salary.pf || 0,
+        tax: salary.tax || 0,
+        otherDeductions: salary.otherDeductions || 0
+    };
+
+    const totalEarnings = Object.values(earnings).reduce((a, b) => a + b, 0);
+    const totalDeductions = Object.values(deductions).reduce((a, b) => a + b, 0);
+    const netSalary = totalEarnings - totalDeductions;
+    const annualCTC = totalEarnings * 12;
+
+    // Generate payment history for last 6 months
+    const generatePaymentHistory = () => {
+        const history = [];
+        const currentDate = new Date();
+
+        for (let i = 0; i < 6; i++) {
+            const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+            const monthName = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            history.push({
+                month: monthName,
+                gross: totalEarnings,
+                deductions: totalDeductions,
+                net: netSalary,
+                status: i === 0 ? 'Processing' : 'Paid',
+                date: date
+            });
+        }
+
+        return history;
+    };
+
+    const paymentHistory = generatePaymentHistory();
 
     return (
         <Layout>
@@ -95,8 +122,8 @@ const Payroll = () => {
                             <FiDollarSign />
                         </div>
                         <div className="overview-content">
-                            <div className="overview-label">Monthly Salary</div>
-                            <div className="overview-value">₹{salary.toLocaleString()}</div>
+                            <div className="overview-label">Gross Salary</div>
+                            <div className="overview-value">₹{totalEarnings.toLocaleString()}</div>
                         </div>
                     </div>
                     <div className="overview-card overview-success">
@@ -139,15 +166,23 @@ const Payroll = () => {
                                 <div className="breakdown-items">
                                     <div className="breakdown-item">
                                         <span className="item-label">Basic Salary</span>
-                                        <span className="item-value">₹{salaryBreakdown.earnings.basic.toLocaleString()}</span>
+                                        <span className="item-value">₹{earnings.basic.toLocaleString()}</span>
                                     </div>
                                     <div className="breakdown-item">
                                         <span className="item-label">House Rent Allowance (HRA)</span>
-                                        <span className="item-value">₹{salaryBreakdown.earnings.hra.toLocaleString()}</span>
+                                        <span className="item-value">₹{earnings.hra.toLocaleString()}</span>
+                                    </div>
+                                    <div className="breakdown-item">
+                                        <span className="item-label">Dearness Allowance (DA)</span>
+                                        <span className="item-value">₹{earnings.da.toLocaleString()}</span>
+                                    </div>
+                                    <div className="breakdown-item">
+                                        <span className="item-label">Transport Allowance (TA)</span>
+                                        <span className="item-value">₹{earnings.ta.toLocaleString()}</span>
                                     </div>
                                     <div className="breakdown-item">
                                         <span className="item-label">Other Allowances</span>
-                                        <span className="item-value">₹{salaryBreakdown.earnings.allowances.toLocaleString()}</span>
+                                        <span className="item-value">₹{earnings.otherAllowances.toLocaleString()}</span>
                                     </div>
                                     <div className="breakdown-item breakdown-total">
                                         <span className="item-label">Total Earnings</span>
@@ -165,15 +200,15 @@ const Payroll = () => {
                                 <div className="breakdown-items">
                                     <div className="breakdown-item">
                                         <span className="item-label">Provident Fund (PF)</span>
-                                        <span className="item-value">₹{salaryBreakdown.deductions.pf.toLocaleString()}</span>
+                                        <span className="item-value">₹{deductions.pf.toLocaleString()}</span>
                                     </div>
                                     <div className="breakdown-item">
                                         <span className="item-label">Income Tax (TDS)</span>
-                                        <span className="item-value">₹{salaryBreakdown.deductions.tax.toLocaleString()}</span>
+                                        <span className="item-value">₹{deductions.tax.toLocaleString()}</span>
                                     </div>
                                     <div className="breakdown-item">
-                                        <span className="item-label">Insurance</span>
-                                        <span className="item-value">₹{salaryBreakdown.deductions.insurance.toLocaleString()}</span>
+                                        <span className="item-label">Other Deductions</span>
+                                        <span className="item-value">₹{deductions.otherDeductions.toLocaleString()}</span>
                                     </div>
                                     <div className="breakdown-item breakdown-total">
                                         <span className="item-label">Total Deductions</span>

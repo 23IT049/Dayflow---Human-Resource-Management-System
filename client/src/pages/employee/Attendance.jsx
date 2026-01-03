@@ -11,10 +11,19 @@ const Attendance = () => {
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
+    const [currentTime, setCurrentTime] = useState(new Date());
     const [dateRange, setDateRange] = useState({
         startDate: new Date(new Date().setDate(1)).toISOString().split('T')[0],
         endDate: new Date().toISOString().split('T')[0]
     });
+
+    // Update clock every second
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
 
     useEffect(() => {
         fetchAttendanceData();
@@ -52,12 +61,26 @@ const Attendance = () => {
         const absentDays = data.filter(a => a.status === 'Absent').length;
         const totalHours = data.reduce((sum, a) => sum + (a.workingHours || 0), 0);
         const avgHours = totalDays > 0 ? totalHours / totalDays : 0;
+        const attendancePercentage = totalDays > 0 ? ((presentDays / totalDays) * 100).toFixed(1) : 0;
+
+        // Calculate current streak
+        let currentStreak = 0;
+        const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
+        for (const record of sortedData) {
+            if (record.status === 'Present') {
+                currentStreak++;
+            } else {
+                break;
+            }
+        }
 
         setStatistics({
             totalDays,
             presentDays,
             absentDays,
-            avgHours: avgHours.toFixed(2)
+            avgHours: avgHours.toFixed(2),
+            attendancePercentage,
+            currentStreak
         });
     };
 
@@ -141,15 +164,27 @@ const Attendance = () => {
                 <div className="attendance-today">
                     <div className="today-status-card">
                         <div className="today-header">
-                            <h3>Today's Status</h3>
-                            <span className="today-date">
-                                {new Date().toLocaleDateString('en-US', {
-                                    weekday: 'long',
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                })}
-                            </span>
+                            <div>
+                                <h3>Today's Status</h3>
+                                <span className="today-date">
+                                    {new Date().toLocaleDateString('en-US', {
+                                        weekday: 'long',
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric'
+                                    })}
+                                </span>
+                            </div>
+                            <div className="live-clock">
+                                <FiClock className="clock-icon" />
+                                <span className="clock-time">
+                                    {currentTime.toLocaleTimeString('en-US', {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        second: '2-digit'
+                                    })}
+                                </span>
+                            </div>
                         </div>
 
                         {todayAttendance ? (
@@ -249,26 +284,35 @@ const Attendance = () => {
                                     <FiCalendar />
                                 </div>
                                 <div className="stat-content">
-                                    <div className="stat-value">{statistics.presentDays}</div>
+                                    <div className="stat-value">{statistics.presentDays}/{statistics.totalDays}</div>
                                     <div className="stat-label">Days Present</div>
                                 </div>
                             </div>
                             <div className="stat-card stat-success">
                                 <div className="stat-icon">
-                                    <FiClock />
+                                    <FiCheckCircle />
                                 </div>
                                 <div className="stat-content">
-                                    <div className="stat-value">{statistics.avgHours}</div>
-                                    <div className="stat-label">Avg Hours/Day</div>
+                                    <div className="stat-value">{statistics.attendancePercentage}%</div>
+                                    <div className="stat-label">Attendance Rate</div>
                                 </div>
                             </div>
                             <div className="stat-card stat-info">
                                 <div className="stat-icon">
-                                    <FiCheckCircle />
+                                    <FiClock />
                                 </div>
                                 <div className="stat-content">
-                                    <div className="stat-value">{statistics.totalDays}</div>
-                                    <div className="stat-label">Total Days</div>
+                                    <div className="stat-value">{statistics.avgHours} hrs</div>
+                                    <div className="stat-label">Avg Hours/Day</div>
+                                </div>
+                            </div>
+                            <div className="stat-card stat-warning">
+                                <div className="stat-icon">
+                                    🔥
+                                </div>
+                                <div className="stat-content">
+                                    <div className="stat-value">{statistics.currentStreak}</div>
+                                    <div className="stat-label">Day Streak</div>
                                 </div>
                             </div>
                         </div>
@@ -351,7 +395,7 @@ const Attendance = () => {
                                             </td>
                                             <td>
                                                 <span className={`badge badge-${record.status === 'Present' ? 'success' :
-                                                        record.status === 'Absent' ? 'error' : 'warning'
+                                                    record.status === 'Absent' ? 'error' : 'warning'
                                                     }`}>
                                                     {record.status}
                                                 </span>

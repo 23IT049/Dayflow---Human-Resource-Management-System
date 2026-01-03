@@ -154,13 +154,13 @@ export const getAllAttendance = async (req, res) => {
 // @access  Private/Admin
 export const markAttendance = async (req, res) => {
     try {
-        const { employeeId, date, status, checkIn, checkOut, remarks } = req.body;
+        const { employee, date, status, checkIn, checkOut, remarks } = req.body;
 
         const attendanceDate = new Date(date);
         attendanceDate.setHours(0, 0, 0, 0);
 
         let attendance = await Attendance.findOne({
-            employee: employeeId,
+            employee: employee,
             date: attendanceDate
         });
 
@@ -171,7 +171,7 @@ export const markAttendance = async (req, res) => {
             attendance.remarks = remarks || attendance.remarks;
         } else {
             attendance = new Attendance({
-                employee: employeeId,
+                employee: employee,
                 date: attendanceDate,
                 status,
                 checkIn: checkIn ? new Date(checkIn) : null,
