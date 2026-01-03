@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { employeeAPI } from '../../services/api';
-import { FiDollarSign, FiDownload, FiTrendingUp, FiTrendingDown } from 'react-icons/fi';
+import { FiDownload, FiTrendingUp, FiTrendingDown } from 'react-icons/fi';
+import { FaRupeeSign } from 'react-icons/fa';
 import Layout from '../../components/Layout/Layout';
 import './Payroll.css';
 
@@ -104,7 +105,7 @@ const Payroll = () => {
             <div className="payroll-page">
                 <div className="page-header">
                     <div>
-                        <h2 className="page-title">Payroll Information</h2>
+                        <h2 className="page-title">My Payroll</h2>
                         <p className="page-subtitle">View your salary details and payment history</p>
                     </div>
                 </div>
@@ -118,30 +119,33 @@ const Payroll = () => {
                 {/* Salary Overview */}
                 <div className="salary-overview">
                     <div className="overview-card overview-primary">
-                        <div className="overview-icon">
-                            <FiDollarSign />
-                        </div>
                         <div className="overview-content">
                             <div className="overview-label">Gross Salary</div>
                             <div className="overview-value">₹{totalEarnings.toLocaleString()}</div>
+                            <div className="overview-subtext">Monthly Earnings</div>
                         </div>
-                    </div>
-                    <div className="overview-card overview-success">
                         <div className="overview-icon">
-                            <FiTrendingUp />
-                        </div>
-                        <div className="overview-content">
-                            <div className="overview-label">Annual CTC</div>
-                            <div className="overview-value">₹{annualCTC.toLocaleString()}</div>
+                            <FaRupeeSign />
                         </div>
                     </div>
                     <div className="overview-card overview-info">
-                        <div className="overview-icon">
-                            <FiDollarSign />
-                        </div>
                         <div className="overview-content">
-                            <div className="overview-label">Net Salary</div>
-                            <div className="overview-value">₹{netSalary.toLocaleString()}</div>
+                            <div className="overview-label">Total Deductions</div>
+                            <div className="overview-value">₹{totalDeductions.toLocaleString()}</div>
+                            <div className="overview-subtext">PF, Tax & Others</div>
+                        </div>
+                        <div className="overview-icon">
+                            <FiTrendingDown />
+                        </div>
+                    </div>
+                    <div className="overview-card overview-success">
+                        <div className="overview-content">
+                            <div className="overview-label">Annual CTC</div>
+                            <div className="overview-value">₹{annualCTC.toLocaleString()}</div>
+                            <div className="overview-subtext">Yearly Package</div>
+                        </div>
+                        <div className="overview-icon">
+                            <FiTrendingUp />
                         </div>
                     </div>
                 </div>
@@ -149,7 +153,7 @@ const Payroll = () => {
                 {/* Salary Breakdown */}
                 <div className="salary-breakdown-section">
                     <div className="card">
-                        <div className="card-header">
+                        <div className="card-header flex-between">
                             <h3 className="card-title">Salary Breakdown</h3>
                             <button className="btn btn-primary btn-sm" onClick={handleDownload}>
                                 <FiDownload /> Download Slip
@@ -159,11 +163,10 @@ const Payroll = () => {
                         <div className="breakdown-grid">
                             {/* Earnings */}
                             <div className="breakdown-column">
-                                <div className="breakdown-header earnings-header">
-                                    <FiTrendingUp />
-                                    <span>Earnings</span>
-                                </div>
-                                <div className="breakdown-items">
+                                <h4 className="column-title text-success">
+                                    <span className="indicator indicator-success"></span> Earnings
+                                </h4>
+                                <div className="breakdown-list">
                                     <div className="breakdown-item">
                                         <span className="item-label">Basic Salary</span>
                                         <span className="item-value">₹{earnings.basic.toLocaleString()}</span>
@@ -184,7 +187,7 @@ const Payroll = () => {
                                         <span className="item-label">Other Allowances</span>
                                         <span className="item-value">₹{earnings.otherAllowances.toLocaleString()}</span>
                                     </div>
-                                    <div className="breakdown-item breakdown-total">
+                                    <div className="breakdown-total total-earnings">
                                         <span className="item-label">Total Earnings</span>
                                         <span className="item-value">₹{totalEarnings.toLocaleString()}</span>
                                     </div>
@@ -193,11 +196,10 @@ const Payroll = () => {
 
                             {/* Deductions */}
                             <div className="breakdown-column">
-                                <div className="breakdown-header deductions-header">
-                                    <FiTrendingDown />
-                                    <span>Deductions</span>
-                                </div>
-                                <div className="breakdown-items">
+                                <h4 className="column-title text-error">
+                                    <span className="indicator indicator-error"></span> Deductions
+                                </h4>
+                                <div className="breakdown-list">
                                     <div className="breakdown-item">
                                         <span className="item-label">Provident Fund (PF)</span>
                                         <span className="item-value">₹{deductions.pf.toLocaleString()}</span>
@@ -210,7 +212,7 @@ const Payroll = () => {
                                         <span className="item-label">Other Deductions</span>
                                         <span className="item-value">₹{deductions.otherDeductions.toLocaleString()}</span>
                                     </div>
-                                    <div className="breakdown-item breakdown-total">
+                                    <div className="breakdown-total total-deductions">
                                         <span className="item-label">Total Deductions</span>
                                         <span className="item-value">₹{totalDeductions.toLocaleString()}</span>
                                     </div>
@@ -219,7 +221,10 @@ const Payroll = () => {
                         </div>
 
                         <div className="net-salary-banner">
-                            <span className="net-label">Net Salary (Take Home)</span>
+                            <div className="net-salary-content">
+                                <span className="net-label">Net Salary (Take Home)</span>
+                                <span className="net-subtext">Amount credited to your account</span>
+                            </div>
                             <span className="net-value">₹{netSalary.toLocaleString()}</span>
                         </div>
                     </div>
@@ -246,12 +251,19 @@ const Payroll = () => {
                             <tbody>
                                 {paymentHistory.map((payment, index) => (
                                     <tr key={index}>
-                                        <td className="font-medium">{payment.month}</td>
+                                        <td className="font-medium">
+                                            <div className="month-cell">
+                                                <div className="calendar-icon">
+                                                    {payment.date.getDate()}
+                                                </div>
+                                                <span>{payment.month}</span>
+                                            </div>
+                                        </td>
                                         <td>₹{payment.gross.toLocaleString()}</td>
                                         <td className="text-error">-₹{payment.deductions.toLocaleString()}</td>
                                         <td className="font-semibold">₹{payment.net.toLocaleString()}</td>
                                         <td>
-                                            <span className="badge badge-success">
+                                            <span className={`badge badge-${payment.status === 'Paid' ? 'success' : 'warning'}`}>
                                                 {payment.status}
                                             </span>
                                         </td>
@@ -260,7 +272,7 @@ const Payroll = () => {
                                                 className="btn btn-secondary btn-sm"
                                                 onClick={handleDownload}
                                             >
-                                                <FiDownload /> Download
+                                                <FiDownload /> Slip
                                             </button>
                                         </td>
                                     </tr>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { employeeAPI } from '../../services/api';
-import { FiDollarSign, FiEdit2, FiDownload } from 'react-icons/fi';
+import { FiEdit2, FiDownload } from 'react-icons/fi';
+import { FaRupeeSign } from 'react-icons/fa';
 import Layout from '../../components/Layout/Layout';
 import './Payroll.css';
 
@@ -120,7 +121,7 @@ const AdminPayroll = () => {
                 <div className="page-header">
                     <div>
                         <h2 className="page-title">Payroll Management</h2>
-                        <p className="page-subtitle">Manage employee salaries and payroll</p>
+                        <p className="page-subtitle">Manage employee salaries and generate payroll reports</p>
                     </div>
                     <button className="btn btn-primary" onClick={() => setMessage({ type: 'info', text: 'Bulk salary slip generation feature coming soon!' })}>
                         <FiDownload /> Generate Slips
@@ -135,55 +136,49 @@ const AdminPayroll = () => {
 
                 {/* Payroll Summary */}
                 <div className="payroll-summary">
-                    <div className="summary-card">
+                    <div className="summary-card card-gradient-1">
                         <div className="summary-icon">
-                            <FiDollarSign />
+                            <FaRupeeSign />
                         </div>
                         <div className="summary-content">
                             <div className="summary-label">Total Monthly Payroll</div>
                             <div className="summary-value">₹{totalGross.toLocaleString()}</div>
                         </div>
                     </div>
-                    <div className="summary-card">
+                    <div className="summary-card card-gradient-2">
                         <div className="summary-icon">
-                            <FiDollarSign />
+                            <FaRupeeSign />
                         </div>
                         <div className="summary-content">
                             <div className="summary-label">Total Net Salary</div>
                             <div className="summary-value">₹{totalNet.toLocaleString()}</div>
                         </div>
                     </div>
-                    <div className="summary-card">
+                    <div className="summary-card card-gradient-3">
                         <div className="summary-icon">
-                            <FiDollarSign />
+                            <FaRupeeSign />
                         </div>
                         <div className="summary-content">
                             <div className="summary-label">Total Deductions</div>
-                            <div className="summary-value text-error">₹{totalDeductions.toLocaleString()}</div>
+                            <div className="summary-value">₹{totalDeductions.toLocaleString()}</div>
                         </div>
                     </div>
                     <div className="summary-card">
-                        <div className="summary-icon">
-                            <FiDollarSign />
+                        <div className="summary-icon icon-primary">
+                            <FaRupeeSign />
                         </div>
                         <div className="summary-content">
                             <div className="summary-label">Average Salary</div>
                             <div className="summary-value">₹{avgSalary.toLocaleString()}</div>
                         </div>
                     </div>
-                    <div className="summary-card">
-                        <div className="summary-icon">
-                            <FiDollarSign />
-                        </div>
-                        <div className="summary-content">
-                            <div className="summary-label">Total Employees</div>
-                            <div className="summary-value">{employees.length}</div>
-                        </div>
-                    </div>
                 </div>
 
                 {/* Payroll Table */}
                 <div className="card">
+                    <div className="card-header">
+                        <h3 className="card-title">Employee Salary Details</h3>
+                    </div>
                     {employees.length > 0 ? (
                         <div className="table-container">
                             <table className="table">
@@ -209,10 +204,20 @@ const AdminPayroll = () => {
 
                                         return (
                                             <tr key={employee._id}>
-                                                <td className="font-medium">
-                                                    {employee.firstName} {employee.lastName}
+                                                <td>
+                                                    <div className="employee-cell">
+                                                        <div className="employee-avatar">
+                                                            {employee.firstName.charAt(0)}
+                                                        </div>
+                                                        <div>
+                                                            <div className="font-medium">{employee.firstName} {employee.lastName}</div>
+                                                            <div className="text-muted text-sm">{employee.employeeId}</div>
+                                                        </div>
+                                                    </div>
                                                 </td>
-                                                <td>{employee.department}</td>
+                                                <td>
+                                                    <span className="badge badge-gray">{employee.department}</span>
+                                                </td>
                                                 <td>₹{(salary.basic || 0).toLocaleString()}</td>
                                                 <td>₹{allowances.toLocaleString()}</td>
                                                 <td className="font-semibold">₹{gross.toLocaleString()}</td>
@@ -220,10 +225,11 @@ const AdminPayroll = () => {
                                                 <td className="font-semibold text-success">₹{net.toLocaleString()}</td>
                                                 <td>
                                                     <button
-                                                        className="btn btn-secondary btn-sm"
+                                                        className="btn btn-icon btn-secondary"
                                                         onClick={() => handleEditSalary(employee)}
+                                                        title="Edit Salary"
                                                     >
-                                                        <FiEdit2 /> Edit
+                                                        <FiEdit2 />
                                                     </button>
                                                 </td>
                                             </tr>
@@ -233,9 +239,9 @@ const AdminPayroll = () => {
                             </table>
                         </div>
                     ) : (
-                        <p className="text-muted text-center" style={{ padding: '2rem' }}>
-                            No employees found
-                        </p>
+                        <div className="empty-state">
+                            <p className="text-muted">No employees found</p>
+                        </div>
                     )}
                 </div>
 
@@ -244,102 +250,131 @@ const AdminPayroll = () => {
                     <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
                         <div className="modal modal-large" onClick={(e) => e.stopPropagation()}>
                             <div className="modal-header">
-                                <h3 className="modal-title">
-                                    Edit Salary - {selectedEmployee?.firstName} {selectedEmployee?.lastName}
-                                </h3>
-                                <button className="modal-close" onClick={() => setShowEditModal(false)}>
-                                    ×
-                                </button>
+                                <div>
+                                    <h3 className="modal-title">Edit Salary Structure</h3>
+                                    <p className="modal-subtitle">
+                                        Update salary details for <span className="text-primary font-medium">{selectedEmployee?.firstName} {selectedEmployee?.lastName}</span>
+                                    </p>
+                                </div>
+                                <button className="modal-close" onClick={() => setShowEditModal(false)}>×</button>
                             </div>
 
                             <form onSubmit={handleSubmit}>
                                 <div className="modal-body">
                                     <div className="salary-grid">
-                                        <div className="salary-column">
-                                            <h4>Earnings</h4>
-                                            <div className="form-group">
-                                                <label className="form-label">Basic Salary</label>
-                                                <input
-                                                    type="number"
-                                                    name="basic"
-                                                    value={salaryData.basic}
-                                                    onChange={handleChange}
-                                                    className="form-input"
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">HRA</label>
-                                                <input
-                                                    type="number"
-                                                    name="hra"
-                                                    value={salaryData.hra}
-                                                    onChange={handleChange}
-                                                    className="form-input"
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">DA</label>
-                                                <input
-                                                    type="number"
-                                                    name="da"
-                                                    value={salaryData.da}
-                                                    onChange={handleChange}
-                                                    className="form-input"
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">TA</label>
-                                                <input
-                                                    type="number"
-                                                    name="ta"
-                                                    value={salaryData.ta}
-                                                    onChange={handleChange}
-                                                    className="form-input"
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">Other Allowances</label>
-                                                <input
-                                                    type="number"
-                                                    name="otherAllowances"
-                                                    value={salaryData.otherAllowances}
-                                                    onChange={handleChange}
-                                                    className="form-input"
-                                                />
+                                        <div className="salary-section">
+                                            <h4 className="section-title text-success">Earnings</h4>
+                                            <div className="form-grid">
+                                                <div className="form-group">
+                                                    <label className="form-label">Basic Salary</label>
+                                                    <div className="input-with-icon">
+                                                        <span className="input-icon">₹</span>
+                                                        <input
+                                                            type="number"
+                                                            name="basic"
+                                                            value={salaryData.basic}
+                                                            onChange={handleChange}
+                                                            className="form-input"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="form-group">
+                                                    <label className="form-label">HRA</label>
+                                                    <div className="input-with-icon">
+                                                        <span className="input-icon">₹</span>
+                                                        <input
+                                                            type="number"
+                                                            name="hra"
+                                                            value={salaryData.hra}
+                                                            onChange={handleChange}
+                                                            className="form-input"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="form-group">
+                                                    <label className="form-label">DA</label>
+                                                    <div className="input-with-icon">
+                                                        <span className="input-icon">₹</span>
+                                                        <input
+                                                            type="number"
+                                                            name="da"
+                                                            value={salaryData.da}
+                                                            onChange={handleChange}
+                                                            className="form-input"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="form-group">
+                                                    <label className="form-label">TA</label>
+                                                    <div className="input-with-icon">
+                                                        <span className="input-icon">₹</span>
+                                                        <input
+                                                            type="number"
+                                                            name="ta"
+                                                            value={salaryData.ta}
+                                                            onChange={handleChange}
+                                                            className="form-input"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="form-group">
+                                                    <label className="form-label">Other Allowances</label>
+                                                    <div className="input-with-icon">
+                                                        <span className="input-icon">₹</span>
+                                                        <input
+                                                            type="number"
+                                                            name="otherAllowances"
+                                                            value={salaryData.otherAllowances}
+                                                            onChange={handleChange}
+                                                            className="form-input"
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div className="salary-column">
-                                            <h4>Deductions</h4>
-                                            <div className="form-group">
-                                                <label className="form-label">PF</label>
-                                                <input
-                                                    type="number"
-                                                    name="pf"
-                                                    value={salaryData.pf}
-                                                    onChange={handleChange}
-                                                    className="form-input"
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">Tax</label>
-                                                <input
-                                                    type="number"
-                                                    name="tax"
-                                                    value={salaryData.tax}
-                                                    onChange={handleChange}
-                                                    className="form-input"
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label className="form-label">Other Deductions</label>
-                                                <input
-                                                    type="number"
-                                                    name="otherDeductions"
-                                                    value={salaryData.otherDeductions}
-                                                    onChange={handleChange}
-                                                    className="form-input"
-                                                />
+                                        <div className="salary-section">
+                                            <h4 className="section-title text-error">Deductions</h4>
+                                            <div className="form-grid">
+                                                <div className="form-group">
+                                                    <label className="form-label">Provident Fund (PF)</label>
+                                                    <div className="input-with-icon">
+                                                        <span className="input-icon">₹</span>
+                                                        <input
+                                                            type="number"
+                                                            name="pf"
+                                                            value={salaryData.pf}
+                                                            onChange={handleChange}
+                                                            className="form-input"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="form-group">
+                                                    <label className="form-label">Income Tax (TDS)</label>
+                                                    <div className="input-with-icon">
+                                                        <span className="input-icon">₹</span>
+                                                        <input
+                                                            type="number"
+                                                            name="tax"
+                                                            value={salaryData.tax}
+                                                            onChange={handleChange}
+                                                            className="form-input"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="form-group">
+                                                    <label className="form-label">Other Deductions</label>
+                                                    <div className="input-with-icon">
+                                                        <span className="input-icon">₹</span>
+                                                        <input
+                                                            type="number"
+                                                            name="otherDeductions"
+                                                            value={salaryData.otherDeductions}
+                                                            onChange={handleChange}
+                                                            className="form-input"
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -354,7 +389,7 @@ const AdminPayroll = () => {
                                         Cancel
                                     </button>
                                     <button type="submit" className="btn btn-primary">
-                                        Update Salary
+                                        Update Salary Structure
                                     </button>
                                 </div>
                             </form>
