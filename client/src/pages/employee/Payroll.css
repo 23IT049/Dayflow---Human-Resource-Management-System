@@ -1,0 +1,210 @@
+.payroll-page {
+    padding: var(--spacing-xl);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.salary-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.overview-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light);
+    transition: all 0.3s ease;
+}
+
+.overview-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+.overview-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+}
+
+.overview-primary .overview-icon {
+    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-pink) 100%);
+}
+
+.overview-success .overview-icon {
+    background: var(--success);
+}
+
+.overview-info .overview-icon {
+    background: var(--info);
+}
+
+.overview-content {
+    flex: 1;
+}
+
+.overview-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: var(--spacing-xs);
+}
+
+.overview-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.salary-breakdown-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.breakdown-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
+}
+
+.breakdown-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.breakdown-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+    color: white;
+}
+
+.earnings-header {
+    background: linear-gradient(135deg, var(--success) 0%, #34D399 100%);
+}
+
+.deductions-header {
+    background: linear-gradient(135deg, var(--error) 0%, #F87171 100%);
+}
+
+.breakdown-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+}
+
+.breakdown-item.breakdown-total {
+    background: var(--bg-primary);
+    border: 2px solid var(--primary-purple);
+    font-weight: 600;
+    margin-top: var(--spacing-sm);
+}
+
+.item-label {
+    color: var(--text-secondary);
+}
+
+.item-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.net-salary-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-pink) 100%);
+    border-radius: var(--radius-lg);
+    color: white;
+    margin-top: var(--spacing-lg);
+}
+
+.net-label {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.net-value {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.text-error {
+    color: var(--error);
+}
+
+.message-info {
+    background: #DBEAFE;
+    color: #1E40AF;
+    border: 1px solid #3B82F6;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .breakdown-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .payroll-page {
+        padding: var(--spacing-md);
+    }
+
+    .salary-overview {
+        grid-template-columns: 1fr;
+    }
+
+    .overview-card {
+        padding: var(--spacing-lg);
+    }
+
+    .overview-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.75rem;
+    }
+
+    .overview-value {
+        font-size: 1.5rem;
+    }
+
+    .net-salary-banner {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        text-align: center;
+    }
+
+    .net-value {
+        font-size: 1.75rem;
+    }
+}

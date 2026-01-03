@@ -29,15 +29,17 @@ const employeeSchema = new mongoose.Schema({
         trim: true
     },
     address: {
-        street: String,
-        city: String,
-        state: String,
-        zipCode: String,
-        country: String
+        type: String,
+        trim: true
     },
     profilePicture: {
         type: String,
         default: ''
+    },
+    emergencyContact: {
+        name: String,
+        phone: String,
+        relationship: String
     },
 
     // Job Details
@@ -140,6 +142,21 @@ employeeSchema.virtual('netSalary').get(function () {
     const gross = this.grossSalary;
     const deductions = this.salary.pf + this.salary.tax + this.salary.otherDeductions;
     return gross - deductions;
+});
+
+// Virtual for position (alias for designation)
+employeeSchema.virtual('position').get(function () {
+    return this.designation;
+});
+
+// Virtual for employeeId (uses MongoDB _id)
+employeeSchema.virtual('employeeId').get(function () {
+    return this._id ? `EMP${String(this._id).slice(-6).toUpperCase()}` : 'N/A';
+});
+
+// Virtual for email (from populated user)
+employeeSchema.virtual('email').get(function () {
+    return this.user?.email || this.populated('user')?.email;
 });
 
 employeeSchema.set('toJSON', { virtuals: true });

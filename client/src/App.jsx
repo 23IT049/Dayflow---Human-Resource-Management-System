@@ -8,8 +8,12 @@ import SignUp from './pages/SignUp';
 
 // Employee Pages
 import EmployeeDashboard from './pages/employee/Dashboard';
+import Profile from './pages/employee/Profile';
+import Attendance from './pages/employee/Attendance';
+import Leave from './pages/employee/Leave';
+import Payroll from './pages/employee/Payroll';
 
-// Placeholder components for other pages
+// Placeholder components for admin pages
 const PlaceholderPage = ({ title }) => (
     <div style={{ padding: '2rem', textAlign: 'center' }}>
         <h2>{title}</h2>
@@ -39,7 +43,7 @@ function App() {
                         path="/employee/profile"
                         element={
                             <ProtectedRoute>
-                                <PlaceholderPage title="Employee Profile" />
+                                <Profile />
                             </ProtectedRoute>
                         }
                     />
@@ -47,7 +51,7 @@ function App() {
                         path="/employee/attendance"
                         element={
                             <ProtectedRoute>
-                                <PlaceholderPage title="Employee Attendance" />
+                                <Attendance />
                             </ProtectedRoute>
                         }
                     />
@@ -55,7 +59,7 @@ function App() {
                         path="/employee/leave"
                         element={
                             <ProtectedRoute>
-                                <PlaceholderPage title="Employee Leave" />
+                                <Leave />
                             </ProtectedRoute>
                         }
                     />
@@ -63,7 +67,7 @@ function App() {
                         path="/employee/payroll"
                         element={
                             <ProtectedRoute>
-                                <PlaceholderPage title="Employee Payroll" />
+                                <Payroll />
                             </ProtectedRoute>
                         }
                     />
